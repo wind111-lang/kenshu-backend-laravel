@@ -1,0 +1,35 @@
+services:
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./src:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - laravel
+
+  nginx:
+    build:
+        context: ./docker/nginx
+    ports:
+      - "8080:80"
+    depends_on:
+        - php
+        - mysql
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: postsdb
+      MYSQL_ROOT_PASSWORD: prtimes
+      MYSQL_USER: prtimes
+      MYSQL_PASSWORD: prtimes
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - laravel
+networks:
+  laravel:

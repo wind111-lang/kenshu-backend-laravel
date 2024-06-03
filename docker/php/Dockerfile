@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
-    vim \
     unzip \
     git \
     curl \

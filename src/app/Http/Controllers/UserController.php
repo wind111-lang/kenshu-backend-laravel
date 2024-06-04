@@ -8,12 +8,6 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController
 {
-    protected $userService;
-
-    public function __construct(UserService $userService)
-    {
-        $this->userService = $userService;
-    }
     public function index()
     {
         //TODO: セッション確認機能を作る

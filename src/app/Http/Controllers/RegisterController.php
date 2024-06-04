@@ -8,12 +8,6 @@ use App\Services\RegisterService;
 
 class RegisterController
 {
-    protected RegisterService $registerService;
-    public function __construct(RegisterService $registerService)
-    {
-        $this->registerService = $registerService;
-    }
-
     public function registerForm(): View
     {
         return view('register');
@@ -22,6 +16,6 @@ class RegisterController
     //TODO: 登録機能を作る
     public function executeRegister(Request $request)
     {
-        $this->registerService->register($request);
+        RegisterService::register($request);
     }
 }

@@ -8,11 +8,6 @@ use Illuminate\View\View;
 
 class LoginController
 {
-    protected LoginService $loginService;
-    public function __construct(LoginService $loginService)
-    {
-        $this->loginService = $loginService;
-    }
 
     public function loginForm(): View
     {
@@ -22,7 +17,7 @@ class LoginController
     //TODO: ログイン/ログアウト機能を作る
     public function executeLogin(Request $request)
     {
-        $this->loginService::login($request);
+        LoginService::login($request);
     }
 
     public function executeLogout(Request $request)

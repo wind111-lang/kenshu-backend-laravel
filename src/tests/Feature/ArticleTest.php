@@ -11,9 +11,37 @@ class ArticleTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_example(): void
+
+    public function test_get_articles(): void
     {
-        $response = $this->get('/articles');
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+
+        $response->assertViewIs('index');
+    }
+
+    public function test_post_article(): void
+    {
+        $response = $this->post('/', [
+            'title' => 'testtitle',
+            'body' => 'testbody',
+            'thumbnail' => [
+                'name' => 'testicon.jpg',
+                'type' => 'image/jpeg',
+                'tmp_name' => 'testicon.jpg',
+                'error' => 0,
+                'size' => 1024
+            ],
+            'postImage' => [
+                'name' => 'testicon.jpg',
+                'type' => 'image/jpeg',
+                'tmp_name' => 'testicon.jpg',
+                'error' => 0,
+                'size' => 1024
+            ],
+            'tags' => ['tag1', 'tag2']
+        ]);
 
         $response->assertStatus(200);
     }

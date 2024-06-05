@@ -13,17 +13,6 @@ class LoginTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_access_to_index(): void
-    {
-        $response = $this->get('/');
-
-        if (Gate::allows('index', Auth::user())) {
-            $response->assertStatus(200);
-        }else{
-            $response->assertStatus(200);
-        }
-    }
-
     public function test_access_to_login(): void
     {
         $response = $this->get('/login');

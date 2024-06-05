@@ -1,13 +1,11 @@
 <?php
 
 namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Article extends Authenticatable
 {
     use HasFactory, Notifiable;
 
@@ -17,10 +15,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'user_image'
+        'user_id',
+        'title',
+        'body',
+        'tags',
+        'article_thumb_image',
+        'article_image',
+        'article_tags'
     ];
 
     /**
@@ -28,9 +29,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-    ];
+    protected $hidden = [];
 
     /**
      * Get the attributes that should be cast.
@@ -41,7 +40,7 @@ class User extends Authenticatable
     {
         return [
             'created_at' => 'datetime',
-            'password' => 'hashed',
+            'updated_at' => 'datetime',
         ];
     }
 }

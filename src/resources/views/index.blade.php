@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>Form</h1>
-<form method="POST" action="{{ route('article.submit') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('articles.submit') }}" enctype="multipart/form-data">
     @csrf
     <div>
         <label for="title">Title:</label>
@@ -43,5 +43,6 @@
     </div>
     <input type="submit" value="Post Article">
 </form>
+<a href="{{ route('index') }}">Back</a>
 </body>
 </html>

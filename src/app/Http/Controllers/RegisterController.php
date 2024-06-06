@@ -14,7 +14,7 @@ class RegisterController
     }
 
     //TODO: 登録機能を作る
-    public function executeRegister(Request $request)
+    public function executeRegister(Request $request):void
     {
         RegisterService::register($request);
     }

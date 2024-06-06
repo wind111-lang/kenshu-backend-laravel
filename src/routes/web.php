@@ -9,16 +9,9 @@ use App\Http\Controllers\RegisterController;
 use App\Models\User;
 use App\Models\Article;
 
-
-Gate::define('index', function(User $user){
-    return $user->username === $user;
-});
-
 //index
-Route::group(['prefix'=>'/'], function (){
-    Route::get('/', [ArticleController::class, 'index']);
-    Route::get('/', [UserController::class, 'index']);
-});
+Route::get('/', [ArticleController::class, 'articlesIndex'])->name('index');
+Route::post('/', [ArticleController::class, 'executePostArticle'])->name('articles.submit');
 
 //login, logout
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login');
@@ -30,7 +23,6 @@ Route::get('/register', [RegisterController::class, 'registerForm'])->name('regi
 Route::post('/register', [RegisterController::class, 'executeRegister'])->name('register.submit');
 
 //article
-Route::post('/', [ArticleController::class, 'executePostArticle'])->name('article.submit');
 Route::get('/articles/{id}', [ArticleController::class, 'articleDetail']);
 Route::patch('/articles/{id}', [ArticleController::class, 'executeUpdateArticle']);
 Route::delete('/articles/{id}', [ArticleController::class, 'executeDeleteArticle']);

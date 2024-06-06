@@ -15,12 +15,12 @@ class LoginController
     }
 
     //TODO: ログイン/ログアウト機能を作る
-    public function executeLogin(Request $request)
+    public function executeLogin(Request $request):void
     {
         LoginService::login($request);
     }
 
-    public function executeLogout(Request $request)
+    public function executeLogout(Request $request):void
     {
         $request->session()->forget('username');
     }

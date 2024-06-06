@@ -13,14 +13,16 @@ class LoginTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_access_to_login(): void
+    public function testLoginViewAccessIsShow(): void
     {
         $response = $this->get('/login');
 
         $response->assertStatus(200);
+
+        $response->assertViewIs('login');
     }
 
-    public function test_submit_login(): void
+    public function testSubmitLoginIsSuccessfully(): void
     {
         $response = $this->post('/login', [
             'username' => 'testuser',

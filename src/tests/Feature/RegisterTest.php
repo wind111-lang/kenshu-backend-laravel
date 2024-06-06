@@ -11,14 +11,16 @@ class RegisterTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_access_to_register(): void
+    public function testRegisterViewAccessIsShow(): void
     {
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+
+        $response->assertViewIs('register');
     }
 
-    public function test_submit_register(): void
+    public function testSubmitRegisterIsSuccessfully(): void
     {
         $response = $this->post('/register', [
             'email' => 'a@test.co.jp',

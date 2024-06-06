@@ -12,7 +12,7 @@ class ArticleTest extends TestCase
      * A basic feature test example.
      */
 
-    public function test_get_articles(): void
+    public function testIndexViewAccessIsShow(): void
     {
         $response = $this->get('/');
 
@@ -21,7 +21,7 @@ class ArticleTest extends TestCase
         $response->assertViewIs('index');
     }
 
-    public function test_post_article(): void
+    public function testPostArticleIsSuccessfully(): void
     {
         $response = $this->post('/', [
             'title' => 'testtitle',

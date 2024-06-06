@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Services\RegisterService;
@@ -14,8 +15,13 @@ class RegisterController
     }
 
     //TODO: 登録機能を作る
-    public function executeRegister(Request $request):void
+
+    public function executeRegister(Request $request): RedirectResponse
     {
-        RegisterService::register($request);
+        if (RegisterService::register($request)) {
+            return redirect()->intended('/login');
+        } else {
+            return back()->withInput()->with('registerError', '登録に失敗しました');
+        }
     }
 }

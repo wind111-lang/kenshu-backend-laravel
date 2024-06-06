@@ -15,7 +15,7 @@ Route::post('/', [ArticleController::class, 'executePostArticle'])->name('articl
 //login, logout
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'executeLogin'])->name('login.submit');
-Route::post('/logout', [LoginController::class, 'executeLogout']);
+Route::post('/logout', [LoginController::class, 'executeLogout'])->name('logout');
 
 //register
 Route::get('/register', [RegisterController::class, 'registerForm'])->name('register');

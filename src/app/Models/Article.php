@@ -14,6 +14,8 @@ class Article extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    protected $table = 'posts';
     protected $fillable = [
         'user_id',
         'title',

@@ -7,6 +7,9 @@
 </head>
 <body>
 <h1>Login</h1>
+@if( Session::has('error') )
+    <p>{{ Session::get('error') }}</p>
+@endif
 <form method="POST" action="{{ route('login.submit') }}">
     @csrf
     <div>

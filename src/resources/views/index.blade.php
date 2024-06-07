@@ -6,6 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+@if( session('loginSuccess') )
+    <p>{{ session('loginSuccess') }}</p>
+@endif
+
+@if(Session::has('token'))
+    <p>{{ Auth::User()['username'] }}さん, こんにちは!</p>
+    <form method="post" action="{{ route('logout') }}">
+        @csrf
+        <input type="submit" value="Logout">
+    </form>
+@else
+    <p>ログインしていません</p>
+    <form method="get" action="{{ route('login') }}">
+        <input type="submit" value="Login">
+    </form>
+    <form method="get" action="{{ route('register') }}">
+        <input type="submit" value="Register">
+    </form>
+@endif
 <h1>Form</h1>
 <form method="POST" action="{{ route('articles.submit') }}" enctype="multipart/form-data">
     @csrf
@@ -43,6 +62,16 @@
     </div>
     <input type="submit" value="Post Article">
 </form>
-<a href="{{ route('index') }}">Back</a>
+<h2>Articles</h2>
+@if( count($articles) > 0 )
+    <ul>
+        @foreach($articles as $article)
+            {{ $article['title'] }}<br>
+            {{ $article['body'] }}<br>
+        @endforeach
+    </ul>
+@else
+    <p>記事がありません</p>
+@endif
 </body>
 </html>

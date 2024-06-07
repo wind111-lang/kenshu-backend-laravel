@@ -2,42 +2,54 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Tests\TestCase;
 use App\Services\LoginService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\UserInfo;
 
 class LoginServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
     /**
      * A basic unit test example.
      */
-
-    public function testUserCanLoginWithCorrectCredentials(): void
+    protected function setUp(): void
     {
-        $user = User::factory()->create([
-            'username' => 'aaa',
-            'password' => 'aaa',
+        parent::setUp();
+        $this->loginService = new LoginService();
+
+        $this->user = UserInfo::factory()->create([
+            'username' => 'testuser',
+            'password' => Hash::make('password'),
         ]);
 
-        $credentials = [
-            'username' => 'aaa',
-            'password' => 'aaa',
-        ];
+        Auth::shouldReceive('attempt')->andReturn(true, false);
+        Session::shouldReceive('token')->andReturn('dummy_token');
+        Session::shouldReceive('put')->andReturn(true);
     }
 
-    public function testUserCannotLoginWithIncorrectCredentials(): void
+    public function testUserCanCallLoginWithCredentials(): void
     {
-        $user = User::factory()->create([
-            'username' => 'aaa',
-            'password' => 'aaa',
+        $request = Request::create('/login', 'POST', [
+            'username' => 'testuser',
+            'password' => 'password',
         ]);
 
-        $credentials = [
-            'username' => 'aaa',
-            'password' => 'bbb',
-        ];
+        Session::shouldReceive('regenerateToken')->once();
+
+        $result = $this->loginService->login($request);
+
+        $this->assertTrue($result);
+    }
+
+    public function testUserCanCallLogout(): void
+    {
+        Session::shouldReceive('flush')->once();
+        $this->loginService->logout();
     }
 }

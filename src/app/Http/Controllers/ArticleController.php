@@ -18,7 +18,8 @@ class ArticleController
     public function articlesIndex(): View
     {
         $articles = ArticleService::getArticles();
-        return view('index', ['articles' => $articles]);
+
+        return view('index', compact('articles'));
     }
 
     //TODO: 記事の投稿機能を作る
@@ -26,10 +27,10 @@ class ArticleController
     {
         try{
             FileUploadService::fileUploader($request);
+            ArticleService::postArticles($request);
         }catch (\Exception $e){
             return redirect()->back()->with('error', $e->getMessage());
         }
-        ArticleService::postArticles($request);
         return redirect()->route('/');
     }
 }

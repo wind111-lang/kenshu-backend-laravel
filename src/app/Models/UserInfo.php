@@ -15,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $created_at
  * @property string $updated_at
  */
-class User extends Authenticatable
+class UserInfo extends Authenticatable
 {
     use HasFactory, Notifiable;
 

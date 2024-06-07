@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Article;
+use App\Models\PostImage;
+use App\Models\Thumbnail;
+use App\Models\PostSelectedTag;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -12,11 +15,9 @@ class ArticleService
     //TODO: 記事のDB処理を書く
     public static function getArticles(): array
     {
-        return [
-            ['title' => '記事タイトル1', 'body' => '記事本文1'],
-            ['title' => '記事タイトル2', 'body' => '記事本文2'],
-            ['title' => '記事タイトル3', 'body' => '記事本文3'],
-        ];
+        $articleModel = new PostImage;
+
+        return $articleModel::all()->toArray();
     }
 
     public static function postArticles(Request $request): void
@@ -26,7 +27,8 @@ class ArticleService
             'body' => 'required',
         ]);
 
-        $article = new Article;
+        $article = new PostImage;
+        $thumbnail = new Thumbnail;
 
         DB::beginTransaction();
 

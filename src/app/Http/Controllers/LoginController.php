@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Services\LoginService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -15,13 +17,18 @@ class LoginController
     }
 
     //TODO: ログイン/ログアウト機能を作る
-    public function executeLogin(Request $request):void
+    public function executeLogin(LoginRequest $request): RedirectResponse
     {
-        LoginService::login($request);
+        if(LoginService::login($request)){
+            return redirect()->intended('/')->with('loginSuccess', 'ログインしました');
+        }else{
+            return back()->withInput()->with('loginError', 'ログインに失敗しました');
+        }
     }
 
-    public function executeLogout(Request $request):void
+    public function executeLogout(): RedirectResponse
     {
-        $request->session()->forget('username');
+        LoginService::logout();
+        return redirect()->intended('/')->with('logoutSuccess', 'ログアウトしました');
     }
 }

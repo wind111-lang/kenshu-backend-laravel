@@ -8,6 +8,10 @@ use Illuminate\View\View;
 
 class ArticleController
 {
+    /**
+     * 記事一覧表示
+     * @return View
+     */
     //TODO: 記事の一覧表示機能を作る
     public function articlesIndex(): View
     {

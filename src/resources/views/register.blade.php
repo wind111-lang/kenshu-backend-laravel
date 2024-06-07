@@ -7,6 +7,9 @@
 </head>
 <body>
 <h1>Register</h1>
+@if(session('registerError'))
+    <p>{{ session('registerError') }}</p>
+@endif
 <form method="post" action="{{ route('register.submit') }}" enctype="multipart/form-data">
     @csrf
     <div>

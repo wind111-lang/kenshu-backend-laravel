@@ -7,8 +7,8 @@
 </head>
 <body>
 <h1>Login</h1>
-@if( Session::has('error') )
-    <p>{{ Session::get('error') }}</p>
+@if( session('loginError') )
+    <p>{{ session('loginError') }}</p>
 @endif
 <form method="POST" action="{{ route('login.submit') }}">
     @csrf
@@ -23,5 +23,6 @@
     <input type="submit" value="Login">
 </form>
 <a href="{{ route('register') }}">Register</a>
+<a href="{{ route('index') }}">Back</a>
 </body>
 </html>

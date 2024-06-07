@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Models\User;
-use App\Models\Article;
+use App\Models\UserInfo;
+use App\Models\PostImage;
 
 //index
 Route::get('/', [ArticleController::class, 'articlesIndex'])->name('index');

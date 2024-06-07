@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\UserInfo;
+use App\Http\Requests\RegisterRequest;
 
 
 class RegisterService
@@ -16,21 +17,14 @@ class RegisterService
      *
      */
     //TODO: 登録のDB処理を書く
-    public static function register(Request $request): bool
+    public static function register(RegisterRequest $request): bool
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'username' => 'required',
-            'password' => 'required',
-            'userIcon' => 'required',
-        ]);
-
         $userinfo = new UserInfo;
 
-        $userinfo->email = $credentials['email'];
-        $userinfo->username = $credentials['username'];
-        $userinfo->password = Hash::make($credentials['password']);
-        $userinfo->user_image = $credentials['userIcon'];
+        $userinfo->email = $request['email'];
+        $userinfo->username = $request['username'];
+        $userinfo->password = Hash::make($request['password']);
+        $userinfo->user_image = $request['userIcon'];
         $userinfo->created_at = now();
         $userinfo->updated_at = now();
 

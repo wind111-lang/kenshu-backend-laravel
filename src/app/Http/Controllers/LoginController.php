@@ -25,8 +25,9 @@ class LoginController
         }
     }
 
-    public function executeLogout(Request $request):void
+    public function executeLogout(): RedirectResponse
     {
-        $request->session()->forget('username');
+        LoginService::logout();
+        return redirect()->intended('/')->with('logoutSuccess', 'ログアウトしました');
     }
 }

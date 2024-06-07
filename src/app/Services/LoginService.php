@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 
 class LoginService
@@ -18,9 +19,15 @@ class LoginService
 
         if(Auth::attempt($credentials)){
             Session::regenerateToken();
+            Session::put('token', csrf_token());
             return true;
         }else{
             return false;
         }
+    }
+
+    public static function logout(): void
+    {
+        session()->flush();
     }
 }

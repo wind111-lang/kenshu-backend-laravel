@@ -33,12 +33,7 @@ class RegisterService
         $userinfo->user_image = $credentials['userIcon'];
         $userinfo->created_at = now();
         $userinfo->updated_at = now();
-        $userinfo->save();
 
-        if ($userinfo->save()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $userinfo->save();
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
-use App\Models\User;
+use App\Models\UserInfo;
 
 class LoginTest extends TestCase
 {
@@ -18,7 +18,7 @@ class LoginTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create([
+        $this->user = UserInfo::factory()->create([
             'username' => 'testuser',
             'password' => Hash::make('password'),
         ]);

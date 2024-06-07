@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class ArticleService
 {
@@ -18,6 +20,32 @@ class ArticleService
 
     public static function postArticles(Request $request): void
     {
-        print_r($request->all());
+        $request->validate([
+            'title' => 'required',
+            'body' => 'required',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg',
+            'postImages'=> 'required|array',
+            'tags' => 'required|array',
+        ]);
+
+        /*
+        $thumbnailPath = $request->thumbnail->store('public/thumbnails');
+        $postImagePaths = [];
+
+        foreach ($request->postImages as $postImage) {
+            $postImagePaths[] = $postImage->store('public/postImages');
+        }
+
+        $credentials = $request->only('user_id', 'title', 'body', 'thumbnail', 'postImages', 'tags');
+
+        for($files = 0; $files < count($postImagePaths); $files++){
+            $article = new Article;
+
+            $article->user_id = Session::get('id');
+            $article->title = $credentials['title'];
+            $article->body = $credentials['body'];
+        }
+        */
+
     }
 }

@@ -20,30 +20,18 @@ class ArticleTest extends TestCase
 
         $response->assertViewIs('index');
     }
-/*
+
     public function testPostArticleIsSuccessfully(): void
     {
-        $response = $this->post('/', [
+        $response = $this->from('/')->post('/', [
             'title' => 'testtitle',
-            'body' => 'testbody',
-            'thumbnail' => [
-                'name' => 'testicon.jpg',
-                'type' => 'image/jpeg',
-                'tmp_name' => 'testicon.jpg',
-                'error' => 0,
-                'size' => 1024
-            ],
-            'postImage' => [
-                'name' => 'testicon.jpg',
-                'type' => 'image/jpeg',
-                'tmp_name' => 'testicon.jpg',
-                'error' => 0,
-                'size' => 1024
-            ],
-            'tags' => ['tag1', 'tag2']
+            'content' => 'testcontent',
+            'user_id' => 1,
+            'created_at' => '2021-01-01 00:00:00',
+            'updated_at' => '2021-01-01 00:00:00'
         ]);
-
-        $response->assertStatus(200);
+        $response->assertStatus(302);
+        $response->assertRedirect('/');
     }
-*/
+
 }

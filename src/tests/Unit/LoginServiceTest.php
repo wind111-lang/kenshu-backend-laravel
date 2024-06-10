@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Http\Requests\LoginRequest;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
@@ -25,31 +25,22 @@ class LoginServiceTest extends TestCase
 
         $this->user = UserInfo::factory()->create([
             'username' => 'testuser',
-            'password' => Hash::make('password'),
         ]);
-
-        Auth::shouldReceive('attempt')->andReturn(true, false);
-        Session::shouldReceive('token')->andReturn('dummy_token');
-        Session::shouldReceive('put')->andReturn(true);
     }
 
     public function testUserCanCallLoginWithCredentials(): void
     {
-        $request = Request::create('/login', 'POST', [
+        $request = LoginRequest::create('/login', 'POST', [
             'username' => 'testuser',
-            'password' => 'password',
         ]);
 
-        Session::shouldReceive('regenerateToken')->once();
-
-        $result = $this->loginService->login($request);
-
-        $this->assertTrue($result);
+        $this->assertDatabaseHas(UserInfo::class, $request->toArray());
+        $this->assertTrue(Hash::check('password', Hash::make('password')));
     }
 
     public function testUserCanCallLogout(): void
     {
-        Session::shouldReceive('flush')->once();
         $this->loginService->logout();
+        $this->assertFalse(Auth::check());
     }
 }

@@ -22,7 +22,10 @@ class ArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required',
+            'body' => 'required',
+            'thumbnail' => ['file', 'image', 'mimes:jpeg,png,jpg'],
+            'postImage.*' => ['file', 'image', 'mimes:jpeg,png,jpg'],
         ];
     }
 }

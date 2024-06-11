@@ -18,19 +18,14 @@ class FileUploadService
     const THUMB_DIR = 'public/thumbnails';
     const POST_IMAGE_DIR = 'public/postImages';
 
-    /**
-     * @throws \Exception
-     */
     public static function userIconUploader(RegisterRequest $request): string
     {
-        try {
-            $file = $request->userIcon->store(self::USER_ICON_DIR);
-            return pathinfo($file, PATHINFO_BASENAME);
-        }catch(\Exception $e){
-            throw new \Exception($e->getMessage());
-        }
+        $file = $request->userIcon->store(self::USER_ICON_DIR);
 
-        return $request->userIcon->hashName();
+        if (!$file){
+            $file = file('./public/userIcon/default/default.png');
+        }
+        return pathinfo($file, PATHINFO_BASENAME);
     }
 
     /**
@@ -38,15 +33,11 @@ class FileUploadService
      */
     public static function articleImageUploader(ArticleRequest $request): void
     {
-        try {
-            $request->thumbnail->store(self::THUMB_DIR);
 
-            for ($files = 0; $files < count($request->postImage); $files++) {
-                $request->postImage[$files]->store(self::POST_IMAGE_DIR);
-            }
+        $request->thumbnail->store(self::THUMB_DIR);
 
-        }catch(\Exception $e){
-            throw new \Exception($e->getMessage());
+        for ($files = 0; $files < count($request->postImage); $files++) {
+            $request->postImage[$files]->store(self::POST_IMAGE_DIR);
         }
     }
 }

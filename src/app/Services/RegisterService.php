@@ -19,8 +19,6 @@ class RegisterService
     //TODO: 登録のDB処理を書く
     public static function register(RegisterRequest $request, string $userIconName): bool
     {
-        $request->userIcon->store('public/userIcon');
-
         $userinfo = new UserInfo;
 
         $userinfo->email = $request['email'];

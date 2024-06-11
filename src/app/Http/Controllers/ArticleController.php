@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Services\ArticleService;
-use Illuminate\Http\Request;
+use App\Services\FileUploadService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Http\Requests\ArticleRequest;
 
 class ArticleController
 {
@@ -16,12 +18,19 @@ class ArticleController
     public function articlesIndex(): View
     {
         $articles = ArticleService::getArticles();
+
         return view('index', ['articles' => $articles]);
     }
 
     //TODO: 記事の投稿機能を作る
-    public function executePostArticle(Request $request): void
+    public function executePostArticle(ArticleRequest $request): RedirectResponse
     {
-        ArticleService::postArticles($request);
+        try{
+            FileUploadService::articleImageUploader($request);
+            ArticleService::postArticle($request);
+        }catch (\Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+        return redirect()->route('index');
     }
 }

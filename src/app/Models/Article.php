@@ -1,6 +1,8 @@
 <?php
 
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -8,22 +10,20 @@ use Illuminate\Notifications\Notifiable;
 class Article extends Authenticatable
 {
     use HasFactory, Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-
     protected $table = 'posts';
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'title',
         'body',
-        'tags',
-        'article_thumb_image',
-        'article_image',
-        'article_tags'
+        'posted_at',
+        'updated_at',
     ];
 
     /**
@@ -41,7 +41,7 @@ class Article extends Authenticatable
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime',
+            'posted_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
     }

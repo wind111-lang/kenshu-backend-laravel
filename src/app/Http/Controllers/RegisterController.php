@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Services\RegisterService;
+use App\Services\FileUploadService;
+use App\Http\Requests\RegisterRequest;
 
 class RegisterController
 {
@@ -19,10 +19,12 @@ class RegisterController
 
     public function executeRegister(RegisterRequest $request): RedirectResponse
     {
-        if (RegisterService::register($request)) {
-            return redirect()->intended('/login');
-        } else {
-            return back()->withInput()->with('registerError', '登録に失敗しました');
+        try{
+            $userIconName = FileUploadService::userIconUploader($request);
+            RegisterService::register($request, $userIconName);
+        }catch (\Exception $e) {
+            return back()->withInput()->with('registerError', $e->getMessage());
         }
+        return redirect()->intended('/login');
     }
 }

@@ -15,6 +15,7 @@ class LoginService
         if(Auth::attempt($request->only('username', 'password'))){
             Session::regenerateToken();
             Session::put('token', csrf_token());
+            Session::put('id', Auth::id());
             return true;
         }else{
             return false;

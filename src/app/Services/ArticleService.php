@@ -19,7 +19,7 @@ class ArticleService
     {
         $result = DB::table('posts')
             ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
-            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at','userinfo.username')
+            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at', 'userinfo.username')
             ->get()->toArray();
 
         return json_decode(json_encode($result), true);
@@ -28,17 +28,13 @@ class ArticleService
     public static function postArticle(ArticleRequest $request): void
     {
         $articleModel = new Article;
+        
+        $articleModel->user_id = Session::get('id');
+        $articleModel->title = $request['title'];
+        $articleModel->body = $request['body'];
+        $articleModel->posted_at = now();
+        $articleModel->updated_at = now();
 
-        try {
-            $articleModel->user_id = Session::get('id');
-            $articleModel->title = $request['title'];
-            $articleModel->body = $request['body'];
-            $articleModel->posted_at = now();
-            $articleModel->updated_at = now();
-
-            $articleModel->save();
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        $articleModel->save();
     }
 }

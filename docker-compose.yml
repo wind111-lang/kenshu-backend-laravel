@@ -11,15 +11,17 @@ services:
   nginx:
     build:
         context: ./docker/nginx
+    volumes:
+        - ./src:/var/www
     ports:
       - "8080:80"
     depends_on:
         - php
-        - mysql
+        - db
     networks:
       - laravel
 
-  mysql:
+  db:
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: postsdb
@@ -29,7 +31,10 @@ services:
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
     networks:
       - laravel
 networks:
   laravel:
+    driver: bridge

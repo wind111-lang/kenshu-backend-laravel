@@ -14,9 +14,9 @@ class FileUploadService
      * @throws \Exception
      */
 
-    const USER_ICON_DIR = '/userIcon';
-    const THUMB_DIR = '/thumbnails';
-    const POST_IMAGE_DIR = '/postImages';
+    const USER_ICON_DIR = 'public/userIcon';
+    const THUMB_DIR = 'public/thumbnails';
+    const POST_IMAGE_DIR = 'public/postImages';
 
     public static function userIconUploader(RegisterRequest $request): string
     {

@@ -18,6 +18,7 @@ class PostImage extends Authenticatable
      */
 
     protected $table = 'post_images';
+    public $timestamps = false;
     protected $fillable = [
         'post_id',
         'img_url',

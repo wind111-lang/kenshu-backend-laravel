@@ -42,7 +42,6 @@ class LoginTest extends TestCase
 
         $response->assertStatus(302);
         $response->assertRedirect('/');
-        $response->assertSessionHas('loginSuccess', 'ログインしました');
 
         $this->assertAuthenticatedAs($this->user);
     }

@@ -19,8 +19,9 @@ class ArticleService
     {
         $result = DB::table('posts')
             ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
-            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at', 'userinfo.username')
-            ->get()->toArray();
+            ->join('thumb_image', 'posts.id', '=', 'thumb_image.post_id')
+            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at', 'userinfo.username', 'userinfo.user_image', 'thumb_image.thumb_url')
+            ->orderBy('updated_at', 'desc')->get()->toArray();
 
         return json_decode(json_encode($result), true);
     }
@@ -28,7 +29,7 @@ class ArticleService
     public static function postArticle(ArticleRequest $request): void
     {
         $articleModel = new Article;
-        
+
         $articleModel->user_id = Session::get('id');
         $articleModel->title = $request['title'];
         $articleModel->body = $request['body'];

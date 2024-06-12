@@ -18,6 +18,7 @@ class Thumbnail extends Authenticatable
      */
 
     protected $table = 'thumb_image';
+    public $timestamps = false;
     protected $fillable = [
         'post_id',
         'thumb_url',

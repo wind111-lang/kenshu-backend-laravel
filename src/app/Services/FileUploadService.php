@@ -28,36 +28,22 @@ class FileUploadService
     /**
      * @throws \Exception
      */
-    public static function articleImageUploader(ArticleRequest $request): void
+    public static function articleImageUploader(ArticleRequest $request): array
     {
+        $uploadedImages = [];
 
-        try {
-            DB::beginTransaction();
+        $thumbFile = $request->thumbnail->store(self::THUMB_DIR);
+        $thumbFilename = pathinfo($thumbFile, PATHINFO_BASENAME);
 
-            $thumbModel = new Thumbnail;
-            $postImageModel = new PostImage;
+        $uploadedImages['thumb'] = $thumbFilename;
 
-            $articleId = DB::table('posts')->latest('id')->first()->id;
+        for ($files = 0; $files < count($request->postImage); $files++) {
+            $postImageFile = $request->postImage[$files]->store(self::POST_IMAGE_DIR);
+            $postImageFilename = pathinfo($postImageFile, PATHINFO_BASENAME);
 
-            $thumbFile = $request->thumbnail->store(self::THUMB_DIR);
-            $thumbFilename = pathinfo($thumbFile, PATHINFO_BASENAME);
-
-            $thumbModel->post_id = $articleId;
-            $thumbModel->thumb_url = $thumbFilename;
-            $thumbModel->save();
-
-            for ($files = 0; $files < count($request->postImage); $files++) {
-                $postImageFile = $request->postImage[$files]->store(self::POST_IMAGE_DIR);
-                $postImageFilename = pathinfo($postImageFile, PATHINFO_BASENAME);
-
-                $postImageModel->post_id = $articleId;
-                $postImageModel->img_url = $postImageFilename;
-                $postImageModel->save();
-            }
-            DB::commit();
-        }catch (\Exception $e){
-            DB::rollBack();
-            throw $e;
+            $uploadedImages['postImages'][] = $postImageFilename;
         }
+
+        return $uploadedImages;
     }
 }

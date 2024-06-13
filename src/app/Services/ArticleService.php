@@ -26,16 +26,38 @@ class ArticleService
         return json_decode(json_encode($result), true);
     }
 
-    public static function postArticle(ArticleRequest $request): void
+    public static function postArticle(ArticleRequest $request, array $uploadedImages): void
     {
-        $articleModel = new Article;
+        try {
+            DB::beginTransaction();
 
-        $articleModel->user_id = Session::get('id');
-        $articleModel->title = $request['title'];
-        $articleModel->body = $request['body'];
-        $articleModel->posted_at = now();
-        $articleModel->updated_at = now();
+            $articleModel = new Article;
+            $thumbModel = new Thumbnail;
+            $postImageModel = new PostImage;
 
-        $articleModel->save();
+            $articleModel->user_id = Session::get('id');
+            $articleModel->title = $request['title'];
+            $articleModel->body = $request['body'];
+            $articleModel->posted_at = now();
+            $articleModel->updated_at = now();
+
+            $articleModel->save();
+
+            $articleId = DB::table('posts')->latest('id')->first()->id;
+
+            $thumbModel->post_id = $articleId;
+            $thumbModel->thumb_url = $uploadedImages['thumb'];
+            $thumbModel->save();
+
+            for ($files = 0; $files < count($uploadedImages['postImages']); $files++) {
+                $postImageModel->post_id = $articleId;
+                $postImageModel->img_url = $uploadedImages['postImages'][$files];
+                $postImageModel->save();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
     }
 }

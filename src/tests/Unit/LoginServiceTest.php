@@ -23,7 +23,7 @@ class LoginServiceTest extends TestCase
         parent::setUp();
         $this->loginService = new LoginService();
 
-        $this->user = UserInfo::factory()->create([
+        $this->userInfo = UserInfo::factory()->create([
             'username' => 'testuser',
         ]);
     }

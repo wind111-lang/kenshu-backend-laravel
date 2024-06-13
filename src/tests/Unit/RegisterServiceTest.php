@@ -7,7 +7,6 @@ use App\Models\UserInfo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Testing\Fluent\Concerns\Has;
 use Tests\TestCase;
 
 class RegisterServiceTest extends TestCase
@@ -21,7 +20,7 @@ class RegisterServiceTest extends TestCase
     protected function setUp():void
     {
         parent::setUp();
-        $this->user = UserInfo::factory()->create([
+        $this->userInfo = UserInfo::factory()->create([
             'email' => 'test@test.jp',
             'username' => 'testuser',
             'user_image' => 'default.jpg',

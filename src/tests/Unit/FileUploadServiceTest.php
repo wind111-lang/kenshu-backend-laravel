@@ -6,17 +6,20 @@ use App\Http\Requests\ArticleRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Article;
-use App\Models\UserInfo;
 use App\Services\ArticleService;
 use App\Services\LoginService;
 use App\Services\RegisterService;
+use App\Services\FileUploadService;
+use App\Models\UserInfo;
+use Illuminate\Http\UploadedFile;
+use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class ArticleServiceTest extends TestCase
+class FileUploadServiceTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
     /**
      * A basic unit test example.
      */
@@ -24,15 +27,16 @@ class ArticleServiceTest extends TestCase
     {
         parent::setUp();
 
+        $this->fileUploadService = new FileUploadService;
         $this->registerService = new RegisterService();
-        $this->loginService = new LoginService();
         $this->articleService = new ArticleService();
+        $this->loginService = new LoginService();
 
         $this->userInfo = UserInfo::factory()->create([
             'id' => 1,
-            'email' => 'a@a.jp',
-            'username' => $this->faker()->name(),
-            'password' => 'password',
+            'email' => 'a@test.co.jp',
+            'username' => 'testuser',
+            'password' => 'testpassword',
             'user_image' => 'testicon.png',
             'created_at' => '2021-01-01 00:00:00',
             'updated_at' => '2021-01-01 00:00:00'
@@ -47,8 +51,21 @@ class ArticleServiceTest extends TestCase
         ]);
     }
 
-    public function testArticleCanPost(): void
+    public function testUserCanUploadArticleImages(): void
     {
+        $thumbImage = UploadedFile::fake()->image('testthumb.png');
+
+        $articleImage = UploadedFile::fake()->image('testarticle.png');
+
+
+        $uploadedFileList = $this->fileUploadService->articleImageUploader(new ArticleRequest([
+            'thumbnail' => $thumbImage,
+            'postImage' => [$articleImage],
+        ]));
+
+        $this->assertFileExists($thumbImage->getPathname());
+        $this->assertFileExists($articleImage->getPathname());
+
         $this->registerService->register(new RegisterRequest([
             'email' => 'b@b',
             'username' => 'testuser2',
@@ -63,15 +80,23 @@ class ArticleServiceTest extends TestCase
             'password' => 'password'
         ]));
 
+        $uploadedFileList['postImages'] = [$articleImage->getClientOriginalName()];
+
         $this->articleService->postArticle(new ArticleRequest([
             'user_id' => 2,
             'title' => 'testtitle',
             'body' => 'testcontent',
             'posted_at' => '2021-01-01 00:00:00',
             'updated_at' => '2021-01-01 00:00:00'
-        ]), ['thumb' => 'testthumb.png', 'postImages' => ['testimage1.png', 'testimage2.png']]);
+        ]), $uploadedFileList);
 
-        $this->assertTrue(Article::where('title', 'testtitle')->exists());
+        $this->assertDatabaseHas('thumb_image', [
+            'thumb_url' => $uploadedFileList['thumb'],
+        ]);
+
+        $this->assertDatabaseHas('post_images', [
+            'img_url' => $uploadedFileList['postImages'][0],
+        ]);
 
     }
 }

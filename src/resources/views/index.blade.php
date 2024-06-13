@@ -7,7 +7,7 @@
 </head>
 <body>
 @if(Session::has('token'))
-    <p>{{ Auth::User()['username'] }}さん, こんにちは!</p>
+    <p>{{ htmlspecialchars(Auth::User()['username']) }}さん, こんにちは!</p>
     <form method="post" action="{{ route('logout') }}">
         @csrf
         <input type="submit" value="Logout">
@@ -74,11 +74,9 @@
             <p>本文: {{ $article['body'] }}</p>
             <p>投稿日時: {{ $article['posted_at'] }}</p>
             <p>更新日時: {{ $article['updated_at'] }}</p>
-            <p>{{asset('storage/thumbnails/' . $article['thumb_url'])}}</p>
-            <a><img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb"></a>
+            <a><img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb" width="200px" height="200px"></a>
             <h4>投稿者:{{ $article['username'] }}</h4>
-            <p>{{asset('storage/userIcon/' . $article['user_image'])}}</p>
-            <img src="{{ asset('storage/userIcon/' . $article['user_image']) }}" alt="userimage">
+            <img src="{{ asset('storage/userIcon/' . $article['user_image']) }}" alt="userimage" width="50px" height="50px">
             @if(isset(Auth::User()['username']))
                 @if(Auth::User()['username'] == $article['username'])
                     <form method="get">

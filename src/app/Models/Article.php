@@ -7,9 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * fillable User
+ * @property int $user_id
+ * @property string $title
+ * @property string $body
+ * @property string $posted_at
+ * @property string $updated_at
+ */
+
 class Article extends Authenticatable
 {
     use HasFactory, Notifiable;
+
     /**
      * The attributes that are mass assignable.
      *

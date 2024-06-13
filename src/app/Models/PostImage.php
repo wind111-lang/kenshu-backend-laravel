@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * fillable Content
+ * @property int $post_id
+ * @property array $img_url
+ */
+
 class PostImage extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -16,7 +22,6 @@ class PostImage extends Authenticatable
      *
      * @var array<int, string>
      */
-
     protected $table = 'post_images';
     public $timestamps = false;
     protected $fillable = [

@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    public mixed $userIcon;
     /**
      * Determine if the user is authorized to make this request.
      */

@@ -18,7 +18,8 @@ class LoginTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = UserInfo::factory()->create([
+
+        $this->userInfo = UserInfo::factory()->create([
             'username' => 'testuser',
             'password' => Hash::make('password'),
         ]);
@@ -43,7 +44,7 @@ class LoginTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect('/');
 
-        $this->assertAuthenticatedAs($this->user);
+        $this->assertAuthenticatedAs($this->userInfo);
     }
 
     public function testUserCannotLoginWithIncorrectCredentials()

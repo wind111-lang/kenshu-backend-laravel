@@ -10,13 +10,6 @@ class UserInfo extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    public string $email;
-    public string $username;
-    public string $password;
-    public string $user_image;
-    public string $created_at;
-    public string $updated_at;
-
     protected $table = 'userinfo';
 
     /**

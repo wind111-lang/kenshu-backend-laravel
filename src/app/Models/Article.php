@@ -6,16 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Session;
 
 class Article extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    public int $user_id;
-    public string $title;
-    public string $body;
-    public string $posted_at;
-    public string $updated_at;
 
     /**
      * The attributes that are mass assignable.

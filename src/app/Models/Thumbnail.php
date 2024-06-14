@@ -11,9 +11,6 @@ class Thumbnail extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    public int $post_id;
-    public array $thumb_url;
-
     /**
      * The attributes that are mass assignable.
      *

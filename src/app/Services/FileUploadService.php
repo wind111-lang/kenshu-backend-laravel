@@ -19,6 +19,7 @@ class FileUploadService
     const string THUMB_DIR = 'public/thumbnails';
     const string POST_IMAGE_DIR = 'public/postImages';
 
+
     private function fileSizeChecker(int $fileSize): void
     {
         // filesizeがbyte: 15000000byte == 15MB

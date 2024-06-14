@@ -31,24 +31,6 @@ class FileUploadServiceTest extends TestCase
         $this->registerService = new RegisterService();
         $this->articleService = new ArticleService();
         $this->loginService = new LoginService();
-
-        $this->userInfo = UserInfo::factory()->create([
-            'id' => 1,
-            'email' => 'a@test.co.jp',
-            'username' => 'testuser',
-            'password' => 'testpassword',
-            'user_image' => 'testicon.png',
-            'created_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
-        ]);
-
-        $this->article = Article::factory()->create([
-            'user_id' => 1,
-            'title' => 'testtitle',
-            'body' => 'testcontent',
-            'posted_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
-        ]);
     }
 
     // ここのサイズはKilobytes

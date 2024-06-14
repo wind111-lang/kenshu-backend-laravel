@@ -27,7 +27,6 @@ class ArticleServiceTest extends TestCase
         $this->userInfo = UserInfo::factory()->create([
             'id' => 1,
             'email' => 'a@a.jp',
-            'username' => 'testuser',
             'username' => $this->faker()->name(),
             'password' => 'password',
             'user_image' => 'testicon.png',
@@ -61,7 +60,7 @@ class ArticleServiceTest extends TestCase
             'title' => 'testtitle',
             'body' => 'testcontent',
             'posted_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
+            'updated_at' => '2021-01-01 00:00:00',
         ]), ['thumb' => 'testthumb.png', 'postImages' => ['testimage1.png', 'testimage2.png']]);
 
         $this->assertTrue(Article::where('title', 'testtitle')->exists());

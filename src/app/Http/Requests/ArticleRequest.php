@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ArticleRequest extends FormRequest
 {
+    public mixed $thumbnail;
+    public mixed $postImage;
+
     /**
      * Determine if the user is authorized to make this request.
      */

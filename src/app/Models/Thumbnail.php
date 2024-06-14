@@ -7,15 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-/**
- * fillable Content
- * @property int $post_id
- * @property array $thumb_url
- */
-
 class Thumbnail extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    public int $post_id;
+    public array $thumb_url;
 
     /**
      * The attributes that are mass assignable.

@@ -20,7 +20,7 @@ class LoginController
     public function executeLogin(LoginRequest $request): RedirectResponse
     {
         if(LoginService::login($request)){
-            return redirect()->intended('/')->with('loginSuccess', 'ログインしました');
+            return redirect()->intended('/');
         }else{
             return back()->withInput()->with('loginError', 'ログインに失敗しました');
         }
@@ -29,6 +29,6 @@ class LoginController
     public function executeLogout(): RedirectResponse
     {
         LoginService::logout();
-        return redirect()->intended('/')->with('logoutSuccess', 'ログアウトしました');
+        return redirect()->intended('/');
     }
 }

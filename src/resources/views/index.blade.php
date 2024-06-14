@@ -6,12 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-@if( session('loginSuccess') )
-    <p>{{ session('loginSuccess') }}</p>
-@endif
-
 @if(Session::has('token'))
-    <p>{{ Auth::User()['username'] }}さん, こんにちは!</p>
+    <p>{{ htmlspecialchars(Auth::User()['username']) }}さん, こんにちは!</p>
     <form method="post" action="{{ route('logout') }}">
         @csrf
         <input type="submit" value="Logout">
@@ -20,11 +16,11 @@
     @if( session('error') )
         <p>{{ session('error') }}</p>
     @endif
-        <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+    <ul>
+        @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
     <form method="POST" action="{{ route('articles.submit') }}" enctype="multipart/form-data">
         @csrf
         <div>
@@ -75,10 +71,23 @@
     <ul>
         @foreach($articles as $article)
             <h3>タイトル: {{ $article['title'] }}</h3>
-            <h4></h4><p>投稿者: {{ $article['username'] }}</p>
             <p>本文: {{ $article['body'] }}</p>
             <p>投稿日時: {{ $article['posted_at'] }}</p>
             <p>更新日時: {{ $article['updated_at'] }}</p>
+            <a><img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb" width="200px" height="200px"></a>
+            <h4>投稿者:{{ $article['username'] }}</h4>
+            <img src="{{ asset('storage/userIcon/' . $article['user_image']) }}" alt="userimage" width="50px" height="50px">
+            @if(isset(Auth::User()['username']))
+                @if(Auth::User()['username'] == $article['username'])
+                    <form method="get">
+                        <input type="submit" value="Edit">
+                    </form>
+                    <form method="post">
+                        @csrf
+                        <input type="submit" value="Delete">
+                    </form>
+                @endif
+            @endif
         @endforeach
     </ul>
 @else

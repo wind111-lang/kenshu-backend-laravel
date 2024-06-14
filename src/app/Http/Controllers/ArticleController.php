@@ -26,8 +26,8 @@ class ArticleController
     public function executePostArticle(ArticleRequest $request): RedirectResponse
     {
         try{
-            FileUploadService::articleImageUploader($request);
-            ArticleService::postArticle($request);
+            $uploadedImages = FileUploadService::articleImageUploader($request);
+            ArticleService::postArticle($request, $uploadedImages);
         }catch (\Exception $e){
             return redirect()->back()->with('error', $e->getMessage());
         }

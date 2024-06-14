@@ -18,6 +18,7 @@ class PostSelectedTag extends Authenticatable
      */
 
     protected $table = 'thumb_image';
+    public $timestamps = false;
     protected $fillable = [
         'post_id',
         'tag_id',

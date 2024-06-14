@@ -13,12 +13,12 @@ class RegisterService
 {
     /**
      * ユーザー登録処理
-     * @param Request $request
-     *
+     * @param RegisterRequest $request
      */
-    //TODO: 登録のDB処理を書く
+
     public static function register(RegisterRequest $request, string $userIconName): bool
     {
+
         $userinfo = new UserInfo;
 
         $userinfo->email = $request['email'];

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Session;
 
 class ArticleService
 {
-    //TODO: 記事のDB処理を書く
     public static function getArticles(): array
     {
         $result = DB::table('posts')

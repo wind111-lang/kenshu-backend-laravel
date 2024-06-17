@@ -23,8 +23,7 @@ Route::post('/register', [RegisterController::class, 'executeRegister'])->name('
 
 
 //article
-Route::get('/article/{id}', [ArticleController::class, 'articleDetail'])->name('article.detail')
-;
+Route::get('/article/{id}', [ArticleController::class, 'articleDetail'])->name('article.detail');
 Route::patch('/article/{id}', [ArticleController::class, 'executeUpdateArticle']);
 Route::delete('/article/{id}', [ArticleController::class, 'executeDeleteArticle']);
 

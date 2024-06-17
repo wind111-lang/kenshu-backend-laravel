@@ -7,6 +7,7 @@ use App\Services\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Requests\ArticleRequest;
+use App\Services\LoginService;
 
 class ArticleController
 {
@@ -20,6 +21,17 @@ class ArticleController
         $articles = ArticleService::getArticles();
 
         return view('index', ['articles' => $articles]);
+    }
+
+    public function articleDetail(int $id): View
+    {
+        try {
+            $articleDetail = ArticleService::getArticleById($id);
+        } catch (\Exception $e) {
+            return view('index')->with('error', $e->getMessage());
+        }
+
+        return view('article', ['articleDetail' => $articleDetail[0]]);
     }
 
     //TODO: 記事の投稿機能を作る

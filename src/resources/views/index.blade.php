@@ -21,7 +21,7 @@
             <li>{{ $error }}</li>
         @endforeach
     </ul>
-    <form method="POST" action="{{ route('articles.submit') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('article.submit') }}" enctype="multipart/form-data">
         @csrf
         <div>
             <label for="title">Title:</label>
@@ -70,18 +70,17 @@
 @if( count($articles) > 0 )
     <ul>
         @foreach($articles as $article)
-            <h3>タイトル: {{ $article['title'] }}</h3>
-            <p>本文: {{ $article['body'] }}</p>
             <p>投稿日時: {{ $article['posted_at'] }}</p>
             <p>更新日時: {{ $article['updated_at'] }}</p>
-            <a><img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb" width="200px" height="200px"></a>
-            <h4>投稿者:{{ $article['username'] }}</h4>
+            <h5>投稿者:{{ $article['username'] }}</h5>
             <img src="{{ asset('storage/userIcon/' . $article['user_image']) }}" alt="userimage" width="50px" height="50px">
+
+        <a href="{{ route('article.detail', ["id" => (int)$article['id']]) }}">
+            <h3>{{ $article['title'] }}</h3>
+            <img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb" width="200px" height="200px">
+        </a>
             @if(isset(Auth::User()['username']))
                 @if(Auth::User()['username'] == $article['username'])
-                    <form method="get">
-                        <input type="submit" value="Edit">
-                    </form>
                     <form method="post">
                         @csrf
                         <input type="submit" value="Delete">

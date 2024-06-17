@@ -67,4 +67,16 @@ class ArticleServiceTest extends TestCase
         $this->assertTrue(Article::where('title', 'testtitle')->exists());
 
     }
+
+    public function testArticleCanGet(): void
+    {
+        $articles = $this->articleService->getArticles();
+        $this->assertIsArray($articles);
+    }
+
+    public function testArticleCanGetById(): void
+    {
+        $article = $this->articleService->getArticleById(1);
+        $this->assertIsArray($article);
+    }
 }

@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\PostImage;
+use App\Models\PostSelectedTag;
+use App\Models\Tag;
 use App\Models\Thumbnail;
 use App\Models\UserInfo;
+use Database\Factories\PostSelectedTagFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -33,7 +36,7 @@ class ArticleTest extends TestCase
             'content' => 'testcontent',
             'user_id' => 1,
             'created_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
+            'updated_at' => '2021-01-01 00:00:00',
         ]);
         $response->assertStatus(302);
         $response->assertRedirect('/');
@@ -69,9 +72,17 @@ class ArticleTest extends TestCase
             'post_id' => 1
         ]);
 
+        Tag::factory()->create([
+            'id' => 1,
+            'tag' => '総合'
+        ]);
+
+        PostSelectedTag::factory()->create([
+            'post_id' => 1,
+            'tag_id' => PostSelectedTagFactory::new()->create()->id
+        ]);
 
         $response = $this->get(route('article.detail', ['id' => 1]));
-
 
         $response->assertStatus(200)->assertSee($article->title)->assertSee($article->body);
 

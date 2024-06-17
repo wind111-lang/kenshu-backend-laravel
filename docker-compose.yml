@@ -24,11 +24,13 @@ services:
   db:
     image: mysql:8.0
     environment:
+      LANG: C.UTF-8
       MYSQL_DATABASE: postsdb
       MYSQL_ROOT_PASSWORD: prtimes
       MYSQL_USER: prtimes
       MYSQL_PASSWORD: prtimes
     volumes:
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
     ports:

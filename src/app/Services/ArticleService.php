@@ -19,10 +19,42 @@ class ArticleService
         $result = DB::table('posts')
             ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
             ->join('thumb_image', 'posts.id', '=', 'thumb_image.post_id')
-            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at', 'userinfo.username', 'userinfo.user_image', 'thumb_image.thumb_url')
-            ->orderBy('updated_at', 'desc')->get()->toArray();
+            ->join('post_images', 'posts.id', '=', 'post_images.post_id')
+            ->join('post_selected_tags', 'posts.id', '=', 'post_selected_tags.post_id')
+            ->join('tags', 'post_selected_tags.tag_id', '=', 'tags.id')
+            ->select(
+                'posts.id as post_id',
+                'posts.title',
+                'posts.body',
+                'posts.posted_at',
+                'posts.updated_at',
+                'userinfo.username',
+                'userinfo.user_image',
+                'thumb_image.thumb_url',
+                'post_images.img_url',
+                'tags.tag'
+            )
+            ->orderBy('posts.updated_at', 'desc')
+            ->get();
 
-        return json_decode(json_encode($result), true);
+        $groupedResults = $result->groupBy('post_id')->map(function ($group) {
+            $post = $group->first();
+            $tags = $group->pluck('tag')->unique()->values()->all();
+
+            return [
+                'id' => $post->post_id,
+                'title' => $post->title,
+                'body' => $post->body,
+                'posted_at' => $post->posted_at,
+                'updated_at' => $post->updated_at,
+                'username' => $post->username,
+                'user_image' => $post->user_image,
+                'thumb_url' => $post->thumb_url,
+                'tag' => $tags
+            ];
+        })->values()->toArray();
+
+        return json_decode(json_encode($groupedResults), true);
     }
 
 
@@ -32,21 +64,53 @@ class ArticleService
             ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
             ->join('thumb_image', 'posts.id', '=', 'thumb_image.post_id')
             ->join('post_images', 'posts.id', '=', 'post_images.post_id')
-            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at',
-                'userinfo.username', 'userinfo.user_image', 'thumb_image.thumb_url', 'post_images.img_url')
-            ->where('posts.id', $id)->get()->toArray();
+            ->join('post_selected_tags', 'posts.id', '=', 'post_selected_tags.post_id')
+            ->join('tags', 'post_selected_tags.tag_id', '=', 'tags.id')
+            ->select(
+                'posts.id as post_id',
+                'posts.title',
+                'posts.body',
+                'posts.posted_at',
+                'posts.updated_at',
+                'userinfo.username',
+                'userinfo.user_image',
+                'thumb_image.thumb_url',
+                'post_images.img_url',
+                'tags.tag'
+            )
+            ->where('posts.id', $id)
+            ->get();
 
-        return json_decode(json_encode($result), true);
+        $groupedResults = $result->groupBy('post_id')->map(function ($group) {
+            $post = $group->first();
+
+            $postImages = $group->pluck('img_url')->unique()->values()->all();
+            $tags = $group->pluck('tag')->unique()->values()->all();
+
+            return [
+                'id' => $post->post_id,
+                'title' => $post->title,
+                'body' => $post->body,
+                'posted_at' => $post->posted_at,
+                'updated_at' => $post->updated_at,
+                'username' => $post->username,
+                'user_image' => $post->user_image,
+                'thumb_url' => $post->thumb_url,
+                'img_url' => $postImages,
+                'tag' => $tags
+            ];
+        })->values()->toArray();
+
+        return json_decode(json_encode($groupedResults), true);
     }
 
     public static function postArticle(ArticleRequest $request, array $uploadedImages): void
     {
         try {
-            DB::beginTransaction();
-
             $articleModel = new Article;
             $thumbModel = new Thumbnail;
             $postImageModel = new PostImage;
+            $tagModel = new PostSelectedTag;
 
             $articleModel->user_id = Session::get('id');
             $articleModel->title = $request['title'];
@@ -63,13 +127,22 @@ class ArticleService
             $thumbModel->save();
 
             for ($files = 0; $files < count($uploadedImages['postImages']); $files++) {
-                $postImageModel->post_id = $articleId;
-                $postImageModel->img_url = $uploadedImages['postImages'][$files];
-                $postImageModel->save();
+                DB::table('post_images')->insert([
+                    'post_id' => $articleId,
+                    'img_url' => $uploadedImages['postImages'][$files]
+                ]);
             }
-            DB::commit();
+
+            $selectedTag = DB::table('tags')->whereIn('tag', $request['tags'])->get()->toArray();
+            $selectedTag = json_decode(json_encode($selectedTag), true);
+
+            for ($tags = 0; $tags < count($selectedTag); $tags++) {
+                DB::table('post_selected_tags')->insert([
+                    'post_id' => $articleId,
+                    'tag_id' => $selectedTag[$tags]['id']
+                ]);
+            }
         } catch (\Exception $e) {
-            DB::rollBack();
             throw new \Exception($e->getMessage());
         }
     }

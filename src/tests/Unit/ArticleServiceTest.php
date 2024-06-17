@@ -61,7 +61,8 @@ class ArticleServiceTest extends TestCase
             'title' => 'testtitle',
             'body' => 'testcontent',
             'posted_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
+            'updated_at' => '2021-01-01 00:00:00',
+            'tags' => ['総合', 'アプリ']
         ]), ['thumb' => 'testthumb.png', 'postImages' => ['testimage1.png', 'testimage2.png']]);
 
         $this->assertTrue(Article::where('title', 'testtitle')->exists());

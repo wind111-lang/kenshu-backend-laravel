@@ -25,6 +25,20 @@ class ArticleService
         return json_decode(json_encode($result), true);
     }
 
+
+    public static function getArticleById(int $id): array
+    {
+        $result = DB::table('posts')
+            ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
+            ->join('thumb_image', 'posts.id', '=', 'thumb_image.post_id')
+            ->join('post_images', 'posts.id', '=', 'post_images.post_id')
+            ->select('posts.id', 'posts.title', 'posts.body', 'posts.posted_at', 'posts.updated_at',
+                'userinfo.username', 'userinfo.user_image', 'thumb_image.thumb_url', 'post_images.img_url')
+            ->where('posts.id', $id)->get()->toArray();
+
+        return json_decode(json_encode($result), true);
+    }
+
     public static function postArticle(ArticleRequest $request, array $uploadedImages): void
     {
         try {

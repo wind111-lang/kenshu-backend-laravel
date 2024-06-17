@@ -10,6 +10,7 @@ use App\Http\Requests\LoginRequest;
 class LoginService
 {
     //TODO: Login/LogoutのDB/認証処理を書く
+
     public static function login(LoginRequest $request): bool
     {
         if(Auth::attempt($request->only('username', 'password'))){
@@ -24,7 +25,7 @@ class LoginService
 
     public static function logout(): void
     {
-        session()->flush();
+        Session::flush();
         Auth::logout();
     }
 }

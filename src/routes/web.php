@@ -10,7 +10,7 @@ use App\Models\PostImage;
 
 //index
 Route::get('/', [ArticleController::class, 'articlesIndex'])->name('index');
-Route::post('/', [ArticleController::class, 'executePostArticle'])->name('articles.submit');
+Route::post('/', [ArticleController::class, 'executePostArticle'])->name('article.submit');
 
 //login, logout
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login');
@@ -21,8 +21,9 @@ Route::post('/logout', [LoginController::class, 'executeLogout'])->name('logout'
 Route::get('/register', [RegisterController::class, 'registerForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'executeRegister'])->name('register.submit');
 
+
 //article
-Route::get('/articles/{id}', [ArticleController::class, 'articleDetail']);
-Route::patch('/articles/{id}', [ArticleController::class, 'executeUpdateArticle']);
-Route::delete('/articles/{id}', [ArticleController::class, 'executeDeleteArticle']);
+Route::get('/article/{id}', [ArticleController::class, 'articleDetail'])->name('article.detail');
+Route::patch('/article/{id}', [ArticleController::class, 'executeUpdateArticle']);
+Route::delete('/article/{id}', [ArticleController::class, 'executeDeleteArticle']);
 

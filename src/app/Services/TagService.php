@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\ArticleRequest;
+use App\Models\PostSelectedTag;
 use Illuminate\Support\Facades\DB;
 
 class TagService
@@ -26,5 +27,10 @@ class TagService
                 'tag_id' => $selectedTag[$tags]['id']
             ]);
         }
+    }
+
+    public static function deleteTag(int $postId): void
+    {
+        PostSelectedTag::where('post_id', $postId)->delete();
     }
 }

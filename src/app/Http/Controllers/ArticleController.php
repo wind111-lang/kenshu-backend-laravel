@@ -46,24 +46,30 @@ class ArticleController
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+
         return redirect()->route('index');
     }
 
     public function updateArticle(int $postId): View
     {
         $articleDetail = ArticleService::getArticleById($postId);
+
         return view('update', ['articleDetail' => $articleDetail[0]]);
     }
 
     public function executeUpdateArticle(ArticleRequest $request, int $postId): RedirectResponse
     {
         ArticleService::updateArticle($request, $postId);
+
         return redirect()->route('article.detail', ["id" => $postId]);
     }
 
     public function executeDeleteArticle(int $postId): RedirectResponse
     {
+        ImageService::articleImageDelete($postId);
+        TagService::deleteTag($postId);
         ArticleService::deleteArticle($postId);
+
         return redirect()->route('index');
     }
 }

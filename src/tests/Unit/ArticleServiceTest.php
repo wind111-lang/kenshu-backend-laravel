@@ -141,6 +141,8 @@ class ArticleServiceTest extends TestCase
             ]);
         }
 
+        $this->imageService::articleImageDelete(1);
+        $this->tagService::deleteTag(1);
         $this->articleService->deleteArticle(1);
 
         $this->assertDatabaseMissing('posts', [

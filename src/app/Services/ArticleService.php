@@ -135,9 +135,6 @@ class ArticleService
     {
         $articleModel = new Article;
         $logArticleModel = new LogArticle;
-        $thumbModel = new Thumbnail;
-        $postImageModel = new PostImage;
-        $postSelectedTagModel = new PostSelectedTag;
 
         $articleInfo = $articleModel->where('id', $postId);
         $article = $articleInfo->get()->toArray()[0];
@@ -149,21 +146,6 @@ class ArticleService
             'posted_at' => $article['posted_at'],
             'deleted_at' => now()
         ]);
-
-        $thumbInfo = $thumbModel->where('post_id', $postId);
-        $thumb = $thumbInfo->get()->toArray()[0];
-        Storage::disk('public')->delete('thumbnails/' . $thumb['thumb_url']);
-        $thumbInfo->delete();
-
-        $postImagesInfo = $postImageModel->where('post_id', $postId);
-        $postImages = $postImagesInfo->get()->toArray();
-
-        for($image = 0; $image < count($postImages); $image++) {
-            Storage::disk('public')->delete('postImages/' . $postImages[$image]['img_url']);
-        }
-        $postImagesInfo->delete();
-
-        $postSelectedTagModel->where('post_id', $postId)->delete();
 
         $articleInfo->delete();
     }

@@ -37,6 +37,7 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/userIcon/');
 
         Storage::disk('local')->assertExists('public/userIcon/' . $uploadedFile->hashName());
+        Storage::fake('local');
     }
 
     public function testUserIconUploadTestIsFail(): void
@@ -47,6 +48,7 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/userIcon/');
 
         Storage::disk('local')->assertMissing('public/userIcon/' . 'missing.jpg');
+        Storage::fake('local');
     }
 
     public function testThumbnailUploadTestIsSuccessfully(): void
@@ -57,6 +59,7 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/thumbnails/');
 
         Storage::disk('local')->assertExists('public/thumbnails/' . $uploadedFile->hashName());
+        Storage::fake('local');
     }
 
     public function testThumbnailUploadTestIsFail(): void
@@ -67,6 +70,7 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/thumbnails/');
 
         Storage::disk('local')->assertMissing('public/thumbnails/' . 'missing.jpg');
+        Storage::fake('local');
     }
 
     public function testPostImagesUploadTestIsSuccessfully(): void
@@ -77,6 +81,7 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/postImages/');
 
         Storage::disk('local')->assertExists('public/postImages/' . $uploadedFile->hashName());
+        Storage::fake('local');
     }
 
     public function testPostImagesUploadTestIsFail(): void
@@ -87,5 +92,6 @@ class FileUploadTest extends TestCase
         $uploadedFile->store('public/postImages/');
 
         Storage::disk('local')->assertMissing('public/postImages/' . 'missing.jpg');
+        Storage::fake('local');
     }
 }

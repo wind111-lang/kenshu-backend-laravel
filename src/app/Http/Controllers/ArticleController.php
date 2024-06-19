@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\ArticleService;
 use App\Services\FileUploadService;
+use App\Services\ImageService;
+use App\Services\TagService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Requests\ArticleRequest;
@@ -38,7 +40,9 @@ class ArticleController
     {
         try {
             $uploadedImages = FileUploadService::articleImageUploader($request);
-            ArticleService::postArticle($request, $uploadedImages);
+            ArticleService::postArticle($request);
+            TagService::postTagRegister($request);
+            ImageService::articleImageRegister($uploadedImages);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

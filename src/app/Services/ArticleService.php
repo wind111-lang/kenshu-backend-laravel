@@ -106,10 +106,9 @@ class ArticleService
         return json_decode(json_encode($groupedResults), true);
     }
 
-    public static function postArticle(ArticleRequest $request, array $uploadedImages): void
+    public static function postArticle(ArticleRequest $request): void
     {
         $articleModel = new Article;
-        $thumbModel = new Thumbnail;
 
         $articleModel->user_id = Session::get('id');
         $articleModel->title = $request['title'];
@@ -118,29 +117,6 @@ class ArticleService
         $articleModel->updated_at = now();
 
         $articleModel->save();
-
-        $articleId = DB::table('posts')->latest('id')->first()->id;
-
-        $thumbModel->post_id = $articleId;
-        $thumbModel->thumb_url = $uploadedImages['thumb'];
-        $thumbModel->save();
-
-        for ($files = 0; $files < count($uploadedImages['postImages']); $files++) {
-            DB::table('post_images')->insert([
-                'post_id' => $articleId,
-                'img_url' => $uploadedImages['postImages'][$files]
-            ]);
-        }
-
-        $selectedTag = DB::table('tags')->whereIn('tag', $request['tags'])->get()->toArray();
-        $selectedTag = json_decode(json_encode($selectedTag), true);
-
-        for ($tags = 0; $tags < count($selectedTag); $tags++) {
-            DB::table('post_selected_tags')->insert([
-                'post_id' => $articleId,
-                'tag_id' => $selectedTag[$tags]['id']
-            ]);
-        }
     }
 
     public static function updateArticle(ArticleRequest $request, int $postId): void

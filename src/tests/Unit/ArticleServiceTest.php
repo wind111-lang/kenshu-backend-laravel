@@ -7,8 +7,10 @@ use App\Models\PostImage;
 use App\Models\Thumbnail;
 use App\Models\UserInfo;
 use App\Services\ArticleService;
+use App\Services\ImageService;
 use App\Services\LoginService;
 use App\Services\RegisterService;
+use App\Services\TagService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -28,6 +30,8 @@ class ArticleServiceTest extends TestCase
         $this->registerService = new RegisterService();
         $this->loginService = new LoginService();
         $this->articleService = new ArticleService();
+        $this->imageService = new ImageService();
+        $this->tagService = new TagService();
 
         $this->userInfo = UserInfo::factory()->create([
             'id' => 1,
@@ -53,6 +57,7 @@ class ArticleServiceTest extends TestCase
             'username' => 'testuser',
             'password' => 'password'
         ]));
+
         $this->articleService->postArticle(new ArticleRequest([
             'user_id' => 1,
             'title' => 'testtitle',
@@ -60,7 +65,17 @@ class ArticleServiceTest extends TestCase
             'posted_at' => '2021-01-01 00:00:00',
             'updated_at' => '2021-01-01 00:00:00',
             'tags' => ['総合', 'アプリ']
-        ]), ['thumb' => 'testthumb.png', 'postImages' => ['testimage1.png', 'testimage2.png']]);
+        ]));
+
+        $this->imageService::articleImageRegister([
+            'thumb' => 'testThumb.png',
+            'postImages' => ['testImage1.png', 'testImage2.png']
+        ]);
+
+        $this->tagService::postTagRegister(new ArticleRequest([
+            'tags' => ['総合', 'アプリ']
+        ]));
+
 
         $this->assertDatabaseHas('posts', [
             'title' => 'testtitle',
@@ -104,7 +119,7 @@ class ArticleServiceTest extends TestCase
 
     public function testArticleDelete(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
 
         $thumbFile = UploadedFile::fake()->image('testthumb.png')->store('thumbnails/');
         $postImagesFile = [
@@ -132,6 +147,6 @@ class ArticleServiceTest extends TestCase
             'id' => 1
         ]);
 
-        Storage::fake('public');
+        Storage::fake('local');
     }
 }

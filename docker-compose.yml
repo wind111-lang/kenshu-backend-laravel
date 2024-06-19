@@ -22,9 +22,9 @@ services:
       - laravel
 
   db:
-    image: mysql:8.0
+    build:
+        context: ./docker/mysql
     environment:
-      LANG: C.UTF-8
       MYSQL_DATABASE: postsdb
       MYSQL_ROOT_PASSWORD: prtimes
       MYSQL_USER: prtimes

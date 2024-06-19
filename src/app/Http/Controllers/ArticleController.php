@@ -34,15 +34,32 @@ class ArticleController
         return view('article', ['articleDetail' => $articleDetail[0]]);
     }
 
-    //TODO: 記事の投稿機能を作る
     public function executePostArticle(ArticleRequest $request): RedirectResponse
     {
-        try{
+        try {
             $uploadedImages = FileUploadService::articleImageUploader($request);
             ArticleService::postArticle($request, $uploadedImages);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+        return redirect()->route('index');
+    }
+
+    public function updateArticle(int $postId): View
+    {
+        $articleDetail = ArticleService::getArticleById($postId);
+        return view('update', ['articleDetail' => $articleDetail[0]]);
+    }
+
+    public function executeUpdateArticle(ArticleRequest $request, int $postId): RedirectResponse
+    {
+        ArticleService::updateArticle($request, $postId);
+        return redirect()->route('article.detail', ["id" => $postId]);
+    }
+
+    public function executeDeleteArticle(int $postId): RedirectResponse
+    {
+        ArticleService::deleteArticle($postId);
         return redirect()->route('index');
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\UserInfo;
+use App\Services\FileUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -32,6 +33,7 @@ class FileUploadTest extends TestCase
         Storage::fake('local');
 
         $uploadedFile = UploadedFile::fake()->image('test_image.jpg');
+
         $uploadedFile->store('public/userIcon/');
 
         Storage::disk('local')->assertExists('public/userIcon/' . $uploadedFile->hashName());

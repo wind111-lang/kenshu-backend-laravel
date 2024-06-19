@@ -12,6 +12,7 @@ use App\Services\RegisterService;
 use App\Services\FileUploadService;
 use App\Models\UserInfo;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -36,6 +37,7 @@ class FileUploadServiceTest extends TestCase
     // ここのサイズはKilobytes
     public function testUserCanUploadUserIcon(): void
     {
+        Storage::fake('public');
         $userIcon = UploadedFile::fake()->image('testicon.png')->size(1000);
 
         $uploadedFile = $this->fileUploadService->userIconUploader(new RegisterRequest([
@@ -43,10 +45,13 @@ class FileUploadServiceTest extends TestCase
         ]));
 
         $this->assertIsString($uploadedFile);
+        Storage::fake('public');
+
     }
 
     public function testUserCanUploadArticleImages(): void
     {
+        Storage::fake('public');
         $thumbImage = UploadedFile::fake()->image('testthumb.png')->size(2500);
         $articleImage = UploadedFile::fake()->image('testarticle.png')->size(5000);
         $articleImage2 = UploadedFile::fake()->image('testarticle2.jpg')->size(5000);
@@ -59,11 +64,13 @@ class FileUploadServiceTest extends TestCase
 
         $this->assertArrayHasKey('thumb', $uploadedFileList);
         $this->assertArrayHasKey('postImages', $uploadedFileList);
+        Storage::fake('public');
     }
 
     public function testUserUploadMultipleImages():void
     {
         $articleImages = [];
+        Storage::fake('public');
 
         $thumbImage = UploadedFile::fake()->image('testthumb.png')->size(2500);
 
@@ -79,12 +86,14 @@ class FileUploadServiceTest extends TestCase
 
         $this->assertArrayHasKey('thumb', $uploadedFileList);
         $this->assertArrayHasKey('postImages', $uploadedFileList);
+        Storage::fake('public');
     }
 
     public function testUserUploadedFileSizeExceeded(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ファイルサイズが大きすぎます');
+        Storage::fake('public');
 
         $thumbImage = UploadedFile::fake()->image('testthumb.png')->size(15000);
         $articleImage = UploadedFile::fake()->image('testarticle.jpg')->size(15000);
@@ -97,7 +106,6 @@ class FileUploadServiceTest extends TestCase
         $this->assertArrayNotHasKey('thumb', $uploadedFileList);
         $this->assertArrayNotHasKey('postImages', $uploadedFileList);
     }
-
     public function testUserUploadedUnexpectedFileFormat(): void
     {
         $this->expectException(\Exception::class);

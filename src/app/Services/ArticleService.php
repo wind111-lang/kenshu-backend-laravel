@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Article;
+use App\Models\LogArticle;
 use App\Models\UserInfo;
 use App\Models\PostImage;
 use App\Models\Thumbnail;
@@ -11,6 +12,7 @@ use App\Http\Requests\ArticleRequest;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleService
 {
@@ -58,7 +60,7 @@ class ArticleService
     }
 
 
-    public static function getArticleById(int $id): array
+    public static function getArticleById(int $postId): array
     {
         $result = DB::table('posts')
             ->join('userinfo', 'posts.user_id', '=', 'userinfo.id')
@@ -78,7 +80,7 @@ class ArticleService
                 'post_images.img_url',
                 'tags.tag'
             )
-            ->where('posts.id', $id)
+            ->where('posts.id', $postId)
             ->get();
 
         $groupedResults = $result->groupBy('post_id')->map(function ($group) {
@@ -106,44 +108,87 @@ class ArticleService
 
     public static function postArticle(ArticleRequest $request, array $uploadedImages): void
     {
-        try {
-            $articleModel = new Article;
-            $thumbModel = new Thumbnail;
-            $postImageModel = new PostImage;
-            $tagModel = new PostSelectedTag;
+        $articleModel = new Article;
+        $thumbModel = new Thumbnail;
 
-            $articleModel->user_id = Session::get('id');
-            $articleModel->title = $request['title'];
-            $articleModel->body = $request['body'];
-            $articleModel->posted_at = now();
-            $articleModel->updated_at = now();
+        $articleModel->user_id = Session::get('id');
+        $articleModel->title = $request['title'];
+        $articleModel->body = $request['body'];
+        $articleModel->posted_at = now();
+        $articleModel->updated_at = now();
 
-            $articleModel->save();
+        $articleModel->save();
 
-            $articleId = DB::table('posts')->latest('id')->first()->id;
+        $articleId = DB::table('posts')->latest('id')->first()->id;
 
-            $thumbModel->post_id = $articleId;
-            $thumbModel->thumb_url = $uploadedImages['thumb'];
-            $thumbModel->save();
+        $thumbModel->post_id = $articleId;
+        $thumbModel->thumb_url = $uploadedImages['thumb'];
+        $thumbModel->save();
 
-            for ($files = 0; $files < count($uploadedImages['postImages']); $files++) {
-                DB::table('post_images')->insert([
-                    'post_id' => $articleId,
-                    'img_url' => $uploadedImages['postImages'][$files]
-                ]);
-            }
-
-            $selectedTag = DB::table('tags')->whereIn('tag', $request['tags'])->get()->toArray();
-            $selectedTag = json_decode(json_encode($selectedTag), true);
-
-            for ($tags = 0; $tags < count($selectedTag); $tags++) {
-                DB::table('post_selected_tags')->insert([
-                    'post_id' => $articleId,
-                    'tag_id' => $selectedTag[$tags]['id']
-                ]);
-            }
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        for ($files = 0; $files < count($uploadedImages['postImages']); $files++) {
+            DB::table('post_images')->insert([
+                'post_id' => $articleId,
+                'img_url' => $uploadedImages['postImages'][$files]
+            ]);
         }
+
+        $selectedTag = DB::table('tags')->whereIn('tag', $request['tags'])->get()->toArray();
+        $selectedTag = json_decode(json_encode($selectedTag), true);
+
+        for ($tags = 0; $tags < count($selectedTag); $tags++) {
+            DB::table('post_selected_tags')->insert([
+                'post_id' => $articleId,
+                'tag_id' => $selectedTag[$tags]['id']
+            ]);
+        }
+    }
+
+    public static function updateArticle(ArticleRequest $request, int $postId): void
+    {
+        $articleModel = new Article;
+        $articleModel = $articleModel->where('id', $postId);
+
+        $articleModel->update([
+            'title' => $request['title'],
+            'body' => $request['body'],
+            'updated_at' => now()
+        ]);
+    }
+
+    public static function deleteArticle(int $postId): void
+    {
+        $articleModel = new Article;
+        $logArticleModel = new LogArticle;
+        $thumbModel = new Thumbnail;
+        $postImageModel = new PostImage;
+        $postSelectedTagModel = new PostSelectedTag;
+
+        $articleInfo = $articleModel->where('id', $postId);
+        $article = $articleInfo->get()->toArray()[0];
+
+        $logArticleModel->create([
+            'user_id' => $article['user_id'],
+            'title' => $article['title'],
+            'body' => $article['body'],
+            'posted_at' => $article['posted_at'],
+            'deleted_at' => now()
+        ]);
+
+        $thumbInfo = $thumbModel->where('post_id', $postId);
+        $thumb = $thumbInfo->get()->toArray()[0];
+        Storage::disk('public')->delete('thumbnails/' . $thumb['thumb_url']);
+        $thumbInfo->delete();
+
+        $postImagesInfo = $postImageModel->where('post_id', $postId);
+        $postImages = $postImagesInfo->get()->toArray();
+
+        for($image = 0; $image < count($postImages); $image++) {
+            Storage::disk('public')->delete('postImages/' . $postImages[$image]['img_url']);
+        }
+        $postImagesInfo->delete();
+
+        $postSelectedTagModel->where('post_id', $postId)->delete();
+
+        $articleInfo->delete();
     }
 }

@@ -2,14 +2,17 @@
 namespace Tests\Unit;
 use App\Http\Requests\ArticleRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Models\Article;
+use App\Models\PostImage;
+use App\Models\Thumbnail;
 use App\Models\UserInfo;
 use App\Services\ArticleService;
 use App\Services\LoginService;
 use App\Services\RegisterService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ArticleServiceTest extends TestCase
@@ -21,20 +24,22 @@ class ArticleServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->registerService = new RegisterService();
         $this->loginService = new LoginService();
         $this->articleService = new ArticleService();
+
         $this->userInfo = UserInfo::factory()->create([
             'id' => 1,
             'email' => 'a@a.jp',
             'username' => 'testuser',
-            'username' => $this->faker()->name(),
             'password' => 'password',
             'user_image' => 'testicon.png',
             'created_at' => '2021-01-01 00:00:00',
             'updated_at' => '2021-01-01 00:00:00'
         ]);
         $this->article = Article::factory()->create([
+            'id' => 1,
             'user_id' => 1,
             'title' => 'testtitle',
             'body' => 'testcontent',
@@ -44,20 +49,12 @@ class ArticleServiceTest extends TestCase
     }
     public function testArticleCanPost(): void
     {
-        $this->registerService->register(new RegisterRequest([
-            'email' => 'b@b',
-            'username' => 'testuser2',
-            'password' => 'password',
-            'user_image' => 'testicon.png',
-            'created_at' => '2021-01-01 00:00:00',
-            'updated_at' => '2021-01-01 00:00:00'
-        ]), 'default.png');
         $this->loginService->login(new LoginRequest([
-            'username' => 'testuser2',
+            'username' => 'testuser',
             'password' => 'password'
         ]));
         $this->articleService->postArticle(new ArticleRequest([
-            'user_id' => 2,
+            'user_id' => 1,
             'title' => 'testtitle',
             'body' => 'testcontent',
             'posted_at' => '2021-01-01 00:00:00',
@@ -65,7 +62,12 @@ class ArticleServiceTest extends TestCase
             'tags' => ['総合', 'アプリ']
         ]), ['thumb' => 'testthumb.png', 'postImages' => ['testimage1.png', 'testimage2.png']]);
 
-        $this->assertTrue(Article::where('title', 'testtitle')->exists());
+        $this->assertDatabaseHas('posts', [
+            'title' => 'testtitle',
+            'body' => 'testcontent',
+            'posted_at' => '2021-01-01 00:00:00',
+            'updated_at' => '2021-01-01 00:00:00'
+        ]);
 
     }
 
@@ -79,5 +81,57 @@ class ArticleServiceTest extends TestCase
     {
         $article = $this->articleService->getArticleById(1);
         $this->assertIsArray($article);
+    }
+
+    public function testArticleUpdate(): void
+    {
+        $this->loginService->login(new LoginRequest([
+            'username' => 'testuser',
+            'password' => 'password'
+        ]));
+
+        $this->articleService->updateArticle(new ArticleRequest([
+            'title' => 'updatetitle',
+            'body' => 'updatecontent',
+            'updated_at' => now(),
+        ]), 1);
+
+        $this->assertDatabaseHas('posts', [
+            'title' => 'updatetitle',
+            'body' => 'updatecontent',
+        ]);
+    }
+
+    public function testArticleDelete(): void
+    {
+        Storage::fake('public');
+
+        $thumbFile = UploadedFile::fake()->image('testthumb.png')->store('thumbnails/');
+        $postImagesFile = [
+            UploadedFile::fake()->image('testimage1.png')->store('postImages/'),
+            UploadedFile::fake()->image('testimage2.png')->store('postImages/')
+        ];
+
+        Thumbnail::factory()->create([
+            'id' => 1,
+            'post_id' => 1,
+            'thumb_url' => $thumbFile
+        ]);
+
+        for ($image = 1; $image <= count($postImagesFile); $image++) {
+            PostImage::factory()->create([
+                'id' => $image,
+                'post_id' => 1,
+                'img_url' => $postImagesFile[$image - 1]
+            ]);
+        }
+
+        $this->articleService->deleteArticle(1);
+
+        $this->assertDatabaseMissing('posts', [
+            'id' => 1
+        ]);
+
+        Storage::fake('public');
     }
 }

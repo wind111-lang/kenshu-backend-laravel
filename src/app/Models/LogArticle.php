@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Session;
 
-class Article extends Authenticatable
+class LogArticle extends Authenticatable
 {
     use HasFactory, Notifiable;
 
@@ -17,9 +17,8 @@ class Article extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $table = 'posts';
+    protected $table = 'log_posts';
     protected $primaryKey = 'id';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -27,7 +26,7 @@ class Article extends Authenticatable
         'title',
         'body',
         'posted_at',
-        'updated_at',
+        'deleted_at',
     ];
 
     /**
@@ -46,7 +45,7 @@ class Article extends Authenticatable
     {
         return [
             'posted_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
     }
 }

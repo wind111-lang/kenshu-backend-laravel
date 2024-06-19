@@ -12,7 +12,7 @@ CREATE TABLE userinfo
 CREATE TABLE posts
 (
     id         SERIAL PRIMARY KEY,
-    user_id    integer,
+    user_id    BIGINT UNSIGNED,
     posted_at  timestamp,
     updated_at timestamp,
     title      varchar(255),
@@ -33,7 +33,7 @@ CREATE TABLE log_userinfo
 CREATE TABLE log_posts
 (
     id         SERIAL PRIMARY KEY,
-    user_id    integer,
+    user_id    BIGINT UNSIGNED,
     posted_at  timestamp,
     deleted_at timestamp,
     title      varchar(255),
@@ -43,14 +43,14 @@ CREATE TABLE log_posts
 CREATE TABLE thumb_image
 (
     id        SERIAL PRIMARY KEY,
-    post_id   integer,
+    post_id   BIGINT UNSIGNED,
     thumb_url text
 );
 
 CREATE TABLE post_images
 (
     id      SERIAL PRIMARY KEY,
-    post_id integer,
+    post_id BIGINT UNSIGNED,
     img_url text
 );
 
@@ -63,9 +63,22 @@ CREATE TABLE tags
 CREATE TABLE post_selected_tags
 (
     id      SERIAL PRIMARY KEY,
-    post_id integer,
-    tag_id  integer
+    post_id BIGINT UNSIGNED,
+    tag_id  BIGINT UNSIGNED
 );
+
+INSERT INTO tags (tag)
+VALUES ('総合'),
+       ('テクノロジー'),
+       ('モバイル'),
+       ('アプリ'),
+       ('エンタメ'),
+       ('ビューティー'),
+       ('ファッション'),
+       ('ライフスタイル'),
+       ('ビジネス'),
+       ('グルメ'),
+       ('スポーツ');
 
 ALTER TABLE posts
     ADD FOREIGN KEY (user_id) REFERENCES userinfo (id);
@@ -81,3 +94,6 @@ ALTER TABLE post_selected_tags
 
 ALTER TABLE post_selected_tags
     ADD FOREIGN KEY (tag_id) REFERENCES tags (id);
+
+
+

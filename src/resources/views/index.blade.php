@@ -42,17 +42,17 @@
         <div>
             <label for="tags">Tags:</label>
             <select multiple name="tags[]">
-                <option value="organized" selected>総合</option>
-                <option value="technology">テクノロジー</option>
-                <option value="mobile">モバイル</option>
-                <option value="app">アプリ</option>
-                <option value="entertainment">エンタメ</option>
-                <option value="beauty">ビューティー</option>
-                <option value="fashion">ファッション</option>
-                <option value="lifestyle">ライフスタイル</option>
-                <option value="business">ビジネス</option>
-                <option value="gourmet">グルメ</option>
-                <option value="sports">スポーツ</option>
+                <option value="総合" selected>総合</option>
+                <option value="テクノロジー">テクノロジー</option>
+                <option value="モバイル">モバイル</option>
+                <option value="アプリ">アプリ</option>
+                <option value="エンタメ">エンタメ</option>
+                <option value="ビューティー">ビューティー</option>
+                <option value="ファッション">ファッション</option>
+                <option value="ライフスタイル">ライフスタイル</option>
+                <option value="ビジネス">ビジネス</option>
+                <option value="グルメ">グルメ</option>
+                <option value="スポーツ">スポーツ</option>
             </select>
         </div>
         <input type="submit" value="Post Article">
@@ -72,17 +72,25 @@
         @foreach($articles as $article)
             <p>投稿日時: {{ $article['posted_at'] }}</p>
             <p>更新日時: {{ $article['updated_at'] }}</p>
-            <h5>投稿者:{{ $article['username'] }}</h5>
-            <img src="{{ asset('storage/userIcon/' . $article['user_image']) }}" alt="userimage" width="50px" height="50px">
+            <td><h5>投稿者:{{ $article['username'] }}</h5>
+                <img src="{{ asset('storage/userIcon/' . htmlspecialchars($article['user_image'])) }}" alt="usericon" width="50px"
+                     height="50px">
+            </td>
 
-        <a href="{{ route('article.detail', ["id" => (int)$article['id']]) }}">
-            <h3>{{ $article['title'] }}</h3>
-            <img src="{{ asset('storage/thumbnails/' . $article['thumb_url']) }}" alt="thumb" width="200px" height="200px">
-        </a>
+            <a href="{{ route('article.detail', ["id" => htmlspecialchars((int)$article['id'])]) }}">
+                <h3>{{ $article['title'] }}</h3>
+                <img src="{{ asset('storage/thumbnails/' . htmlspecialchars($article['thumb_url'])) }}" alt="thumb" width="200px"
+                     height="200px">
+            </a>
+            <p>タグ:</p>
+            @foreach($article['tag'] as $tag)
+                <td>{{ $tag }}</td>
+            @endforeach
             @if(isset(Auth::User()['username']))
                 @if(Auth::User()['username'] == $article['username'])
-                    <form method="post">
+                    <form method="POST" action={{route('article.delete', ["id" => htmlspecialchars((int)$article['id'])]) }}>
                         @csrf
+                        @method('DELETE')
                         <input type="submit" value="Delete">
                     </form>
                 @endif

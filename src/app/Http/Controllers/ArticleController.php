@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\ArticleService;
 use App\Services\FileUploadService;
+use App\Services\ImageService;
+use App\Services\TagService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Requests\ArticleRequest;
@@ -34,15 +36,40 @@ class ArticleController
         return view('article', ['articleDetail' => $articleDetail[0]]);
     }
 
-    //TODO: 記事の投稿機能を作る
     public function executePostArticle(ArticleRequest $request): RedirectResponse
     {
-        try{
+        try {
             $uploadedImages = FileUploadService::articleImageUploader($request);
-            ArticleService::postArticle($request, $uploadedImages);
-        }catch (\Exception $e){
+            ArticleService::postArticle($request);
+            TagService::postTagRegister($request);
+            ImageService::articleImageRegister($uploadedImages);
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+
+        return redirect()->route('index');
+    }
+
+    public function updateArticle(int $postId): View
+    {
+        $articleDetail = ArticleService::getArticleById($postId);
+
+        return view('update', ['articleDetail' => $articleDetail[0]]);
+    }
+
+    public function executeUpdateArticle(ArticleRequest $request, int $postId): RedirectResponse
+    {
+        ArticleService::updateArticle($request, $postId);
+
+        return redirect()->route('article.detail', ["id" => $postId]);
+    }
+
+    public function executeDeleteArticle(int $postId): RedirectResponse
+    {
+        ImageService::articleImageDelete($postId);
+        TagService::deleteTag($postId);
+        ArticleService::deleteArticle($postId);
+
         return redirect()->route('index');
     }
 }

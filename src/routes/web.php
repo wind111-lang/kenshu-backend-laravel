@@ -24,6 +24,7 @@ Route::post('/register', [RegisterController::class, 'executeRegister'])->name('
 
 //article
 Route::get('/article/{id}', [ArticleController::class, 'articleDetail'])->name('article.detail');
-Route::patch('/article/{id}', [ArticleController::class, 'executeUpdateArticle']);
-Route::delete('/article/{id}', [ArticleController::class, 'executeDeleteArticle']);
+Route::get('/article/{id}/edit', [ArticleController::class, 'updateArticle'])->name('article.update');
+Route::patch('/article/{id}/edit', [ArticleController::class, 'executeUpdateArticle'])->name('article.update.submit');
+Route::delete('/article/{id}/delete', [ArticleController::class, 'executeDeleteArticle'])->name('article.delete');
 
